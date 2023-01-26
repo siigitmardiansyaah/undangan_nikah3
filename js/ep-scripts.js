@@ -1,0 +1,35 @@
+var debounce=function(func,wait,immediate){var timeout;return function(){var context=this,args=arguments;var callNow=immediate&&!timeout;clearTimeout(timeout);timeout=setTimeout(function(){timeout=null;if(!immediate){func.apply(context,args)}},wait);if(callNow)func.apply(context,args)}};(function($,elementor){'use strict';var widgetAvdGoogleMap=function($scope,$){var $advancedGoogleMap=$scope.find('.bdt-advanced-gmap'),$GmapWrapper=$scope.find('.bdt-advanced-map'),map_settings=$advancedGoogleMap.data('map_settings'),markers=$advancedGoogleMap.data('map_markers'),map_lists=$scope.find('ul.bdt-gmap-lists div.bdt-gmap-list-item'),map_search_form=$scope.find('.bdt-search'),map_search_text_box=$scope.find('.bdt-search-input'),map_form=$scope.find('.bdt-gmap-search-wrapper > form');let listMarker,markupPhone,markupWebsite,markupPlace,markupTitle,markupContent;if(!$advancedGoogleMap.length){return}
+$GmapWrapper.removeAttr("style");var avdGoogleMap=new GMaps(map_settings);for(var i in markers){listMarker=(markers[i].image!==undefined)?markers[i].image[0]:markers[i].image;markupWebsite=(markers[i].website!==undefined)?`<a href="${markers[i].website}">${markers[i].website}</a>`:'';markupPhone=(markers[i].phone!==undefined)?`<a href="tel:${markers[i].phone}">${markers[i].phone}</a>`:'';markupContent=(markers[i].content!==undefined)?`<span class="bdt-tooltip-content">${markers[i].content}</span><br>`:'';markupPlace=(markers[i].place!==undefined)?`<h5 class="bdt-tooltip-place">${markers[i].place}</h5>`:'';markupTitle=(markers[i].title!==undefined)?`<h4 class="bdt-tooltip-title">${markers[i].title}</h4>`:'';var content=`<div class="bdt-map-tooltip-view">
+						<div class="bdt-map-tooltip-view-inner">
+							<div class="bdt-map-tooltip-top-image">
+							<img class="bdt-map-image" src="${listMarker}" alt="" />
+							</div>
+							<div class="bdt-map-tooltip-bottom-footer">
+								${markupTitle}
+								${markupPlace}
+								${markupContent}
+								${markupWebsite}
+								${markupPhone}
+							</div>
+						</div>
+						</div>`;avdGoogleMap.addMarker({lat:markers[i].lat,lng:markers[i].lng,title:markers[i].title,icon:markers[i].icon,infoWindow:{content:content},})}
+if($advancedGoogleMap.data('map_geocode')){$(map_form).submit(function(e){e.preventDefault();GMaps.geocode({address:$(this).find('.bdt-search-input').val().trim(),callback:function(results,status){if(status==='OK'){var latlng=results[0].geometry.location;avdGoogleMap.setCenter(latlng.lat(),latlng.lng());avdGoogleMap.addMarker({lat:latlng.lat(),lng:latlng.lng()})}}})})}
+if($advancedGoogleMap.data('map_style')){avdGoogleMap.addStyle({styledMapName:'Custom Map',styles:$advancedGoogleMap.data('map_style'),mapTypeId:'map_style'});avdGoogleMap.setStyle('map_style')}
+$(map_lists).bind("click",function(e){var mapList;var dataSettings=$(this).data("settings"),mapList=new GMaps({el:dataSettings.el,lat:dataSettings.lat,lng:dataSettings.lng,title:dataSettings.title,zoom:map_settings.zoom,});listMarker=(dataSettings.image!==undefined)?dataSettings.image[0]:dataSettings.image;markupTitle=(dataSettings.title!==undefined)?`<h4 class="bdt-tooltip-title">${dataSettings.title}</h4>`:'';markupPlace=(dataSettings.place!==undefined)?`<h5 class="bdt-tooltip-place">${dataSettings.place}</h5>`:'';markupContent=(dataSettings.content!==undefined)?`<span class="bdt-tooltip-content">${dataSettings.content}</span><br>`:'';markupWebsite=(dataSettings.website!==undefined)?`<a href="${dataSettings.website}">${dataSettings.website}</a>`:'';markupPhone=(dataSettings.phone!==undefined)?`<a href="tel:${dataSettings.phone}">${dataSettings.phone}</a>`:'';var content=`<div class="bdt-map-tooltip-view">
+							<div class="bdt-map-tooltip-view-inner">
+								<div class="bdt-map-tooltip-top-image">
+								<img class="bdt-map-image" src="${listMarker}" alt="" />
+								</div>
+								<div class="bdt-map-tooltip-bottom-footer">
+										${markupTitle}
+										${markupPlace}
+										${markupContent}
+										${markupWebsite}
+										${markupPhone}
+								</div>
+							</div>
+						</div>`
+mapList.addMarker({lat:dataSettings.lat,lng:dataSettings.lng,title:dataSettings.title,icon:dataSettings.icon,infoWindow:{content:content,},});if($advancedGoogleMap.data('map_style')){mapList.addStyle({styledMapName:'Custom Map',styles:$advancedGoogleMap.data('map_style'),mapTypeId:'map_style'});mapList.setStyle('map_style')}});$(map_search_form).submit(function(e){e.preventDefault();let searchValue=$(map_search_text_box).val().toLowerCase();$(map_lists).filter(function(){$(this).toggle($(this).text().toLowerCase().indexOf(searchValue)>-1)})});$(map_search_text_box).keyup(function(){let searchValue=$(this).val().toLowerCase();$(map_lists).filter(function(){$(this).toggle($(this).text().toLowerCase().indexOf(searchValue)>-1)})})};jQuery(window).on('elementor/frontend/init',function(){elementorFrontend.hooks.addAction('frontend/element_ready/bdt-advanced-gmap.default',widgetAvdGoogleMap)})}(jQuery,window.elementorFrontend));(function($,elementor){'use strict';var widgetAdvancedImageGallery=function($scope,$){var $advancedImageGallery=$scope.find('.bdt-ep-advanced-image-gallery'),$settings=$advancedImageGallery.data('settings');if(!$advancedImageGallery.length){return}
+if($settings.tiltShow==!0){var elements=document.querySelectorAll($settings.id+" [data-tilt]");VanillaTilt.init(elements)}};jQuery(window).on('elementor/frontend/init',function(){elementorFrontend.hooks.addAction('frontend/element_ready/bdt-advanced-image-gallery.default',widgetAdvancedImageGallery);elementorFrontend.hooks.addAction('frontend/element_ready/bdt-advanced-image-gallery.bdt-carousel',widgetAdvancedImageGallery)})}(jQuery,window.elementorFrontend));(function($,elementor){'use strict';var widgetQRCode=function($scope,$){var $qrcode=$scope.find('.bdt-qrcode'),image=$scope.find('.bdt-qrcode-image');if(!$qrcode.length){return}
+var settings=$qrcode.data('settings');settings.image=image[0];$($qrcode).qrcode(settings)};jQuery(window).on('elementor/frontend/init',function(){elementorFrontend.hooks.addAction('frontend/element_ready/bdt-qrcode.default',widgetQRCode)})}(jQuery,window.elementorFrontend));(function($,elementor){'use strict';var widgetStaticCarousel=function($scope,$){var $StaticCarousel=$scope.find('.bdt-static-carousel');if(!$StaticCarousel.length){return}
+var $StaticCarouselContainer=$StaticCarousel.find('.swiper-container'),$settings=$StaticCarousel.data('settings');const Swiper=elementorFrontend.utils.swiper;initSwiper();async function initSwiper(){var swiper=await new Swiper($StaticCarouselContainer,$settings);if($settings.pauseOnHover){$($StaticCarouselContainer).hover(function(){(this).swiper.autoplay.stop()},function(){(this).swiper.autoplay.start()})}}};jQuery(window).on('elementor/frontend/init',function(){elementorFrontend.hooks.addAction('frontend/element_ready/bdt-static-carousel.default',widgetStaticCarousel)})}(jQuery,window.elementorFrontend))
